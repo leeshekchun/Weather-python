@@ -1,0 +1,51 @@
+import requests
+
+# Function to fetch the weather data from the API
+def get_weather(city, api_key):
+    # for API method, see: https://www.weatherapi.com/docs/
+    # current weather
+    base_url = "http://api.weatherapi.com/v1/current.json?"
+    # Building the full API URL
+    complete_url = f"{base_url}key={api_key}&q={city}&aqi=no"
+    
+    # Sending a GET request to the API
+    response = requests.get(complete_url)
+    
+    # Check if the response is successful (status code 200)
+    if response.status_code == 200:
+        data = response.json()
+        
+        # Extracting relevant information from the response
+        if 'error' in data:
+            print(f"Error: {data['error']['message']}")
+            return
+        
+        # Parse the weather data
+        location = data['location']
+        current = data['current']
+        
+        city_name = location['name']
+        country_name = location['country']
+        temperature = current['temp_c']
+        weather_description = current['condition']['text']
+        humidity = current['humidity']
+        wind_speed = current['wind_kph']
+        
+        # Display weather details
+        print(f"Weather in {city_name}, {country_name}:")
+        print(f"Temperature: {temperature}°C")
+        print(f"Weather: {weather_description}")
+        print(f"Humidity: {humidity}%")
+        print(f"Wind Speed: {wind_speed} km/h")
+    else:
+        print("City not found or invalid API key.")
+
+# Main function to run the app
+def main():
+    api_key = "2258d45fb3fb4a8a80f24943240811"  # Replace this with your actual API key from OpenWeatherMap
+    # Prompt to enter a city name
+    city = input("Enter city name: ")
+    get_weather(city, api_key)
+
+if __name__ == "__main__":
+    main()
